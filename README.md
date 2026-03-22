@@ -1,3 +1,3 @@
-
-Calcular varianza explicada y acumulada de GROMACS (primeros 3 componentes).
-Imprime resultados en la terminal con etiquetas de variantes.
+The program `PCA.py` analyzes the eigenval.xvg files to create a plot that allows comparison of the eigenvalues for each principal component. The program was originally designed for five files but can be extended by expanding the color palette and the legend names for each specific file, or simply annotating the legend to only display the plot.
+The program `var.py` is responsible for calculating the explained and cumulative variance for each principal component, with emphasis on the first three principal components where most of the variance is accumulated.
+The legend can be corrected based on the dataset applied.

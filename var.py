@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Calcular varianza explicada y acumulada de GROMACS (primeros 3 componentes).
-Imprime resultados en la terminal con etiquetas de variantes.
+Calculate explained and cumulative variance from GROMACS (first 3 components).
+Print results in the terminal with variant labels.
 """
 
 import numpy as np
@@ -29,28 +29,28 @@ def load_xvg(path, max_components=None):
 def main():
     eigenval_files = sorted(glob.glob("eigenval*.xvg"))
     if not eigenval_files:
-        print("No se encontraron archivos eigenval*.xvg")
+        print("No eigenval*.xvg files found")
         return
 
-    # Etiquetas de variantes
+    # Variant labels
     run_labels = [
         "Wild type",
-        "Variante Alpha",
-        "Variante Gamma",
-        "Variante Delta",
-        "Variante Omicron BA.1"
+        "Alpha variant",
+        "Gamma variant",
+        "Delta variant",
+        "Omicron BA.1 variant"
     ]
 
-    print("=== Resultados de varianza explicada y acumulada ===")
+    print("=== Results of explained and cumulative variance ===")
     for idx, f in enumerate(eigenval_files, start=1):
         eigenvalues = load_xvg(f, max_components=20)
         if eigenvalues.size == 0:
-            print(f"WARNING: {f} no contiene datos válidos")
+            print(f"WARNING: {f} contains no valid data")
             continue
 
         total = np.sum(eigenvalues)
         if total == 0:
-            print(f"WARNING: {f} suma de eigenvalues es 0")
+            print(f"WARNING: {f} eigenvalues sum is 0")
             continue
 
         explained = eigenvalues / total
@@ -60,9 +60,8 @@ def main():
 
         print(f"\n{label}:")
         for comp in range(3):
-            print(f"  Componente {comp+1}: {explained[comp]*100:.2f}% explicado, "
-                  f"{cumulative[comp]*100:.2f}% acumulado")
+            print(f"  Component {comp+1}: {explained[comp]*100:.2f}% explained, "
+                  f"{cumulative[comp]*100:.2f}% cumulative")
 
 if __name__ == "__main__":
     main()
-

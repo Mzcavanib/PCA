@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Graficar múltiples curvas de eigenvalues y varianza explicada de GROMACS.
-Busca archivos enumerados como eigenval1.xvg, eigenval2.xvg, etc.
-Valida que exista el par eigenvecN.trr correspondiente.
+Plot multiple eigenvalue and explained variance curves from GROMACS.
+Looks for files named eigenval1.xvg, eigenval2.xvg, etc.
+Validates that the corresponding eigenvecN.trr file exists.
 """
 
 import numpy as np
@@ -12,7 +12,7 @@ import glob
 import os
 
 def load_xvg(path):
-    """Carga eigenvalores desde archivo .xvg ignorando comentarios (#,@)."""
+    """Load eigenvalues from .xvg file ignoring comments (#,@)."""
     data = []
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         for line in f:
@@ -28,18 +28,18 @@ def load_xvg(path):
     return np.array(data, dtype=float)
 
 def main():
-    # --- Detectar archivos eigenval*.xvg ---
+    # --- Detect eigenval*.xvg files ---
     eigenval_files = sorted(glob.glob("eigenval*.xvg"))
     if not eigenval_files:
-        print("No se encontraron archivos eigenval*.xvg")
+        print("No eigenval*.xvg files found")
         return
 
-    print("Archivos encontrados:", eigenval_files)
+    print("Files found:", eigenval_files)
 
-    # Etiquetas fijas para los primeros cinco archivos
-    etiquetas_fijas = ["WT", "Alpha", "Gamma", "Delta", "Omicron BA.1"]
+    # Fixed labels for the first five files
+    fixed_labels = ["WT", "Alpha", "Gamma", "Delta", "Omicron BA.1"]
 
-    # --- Gráfico de la curva de eigenvalues ---
+    # --- Eigenvalue curve plot ---
     plt.figure(figsize=(9,6))
     cmap = plt.cm.get_cmap("tab10", len(eigenval_files))
 
@@ -47,30 +47,30 @@ def main():
         eigenvalues = load_xvg(f)
         components = np.arange(1, len(eigenvalues) + 1)
 
-        # Validar existencia del eigenvec correspondiente
+        # Validate existence of corresponding eigenvec file
         trr_file = f.replace("eigenval", "eigenvec").replace(".xvg", ".trr")
         if os.path.isfile(trr_file):
-            print(f"CHECK: {trr_file} encontrado para {f}")
+            print(f"CHECK: {trr_file} found for {f}")
         else:
-            print(f"WARNING: No existe {trr_file} para {f}")
+            print(f"WARNING: {trr_file} does not exist for {f}")
 
-        # Asignar etiqueta: primeras cinco con nombres fijos, resto con nombre de archivo
-        if idx <= len(etiquetas_fijas):
-            label = etiquetas_fijas[idx-1]
+        # Assign label: first five with fixed names, rest with filename
+        if idx <= len(fixed_labels):
+            label = fixed_labels[idx-1]
         else:
             label = os.path.splitext(os.path.basename(f))[0]
 
         plt.plot(components, eigenvalues, marker="o",
                  color=cmap(idx-1), label=label)
 
-    plt.xlabel("Componentes principales")
-    plt.ylabel("Valores propios")
-    plt.title("Comparación de Eigenvalues Componentes principales")
+    plt.xlabel("Principal components")
+    plt.ylabel("Eigenvalues")
+    plt.title("Comparison of Eigenvalues Principal Components")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.show()
 
-    # --- Varianza explicada ---
+    # --- Explained variance ---
     plt.figure(figsize=(9,6))
 
     for idx, f in enumerate(eigenval_files, start=1):
@@ -81,24 +81,24 @@ def main():
         explained = eigenvalues / total
         cumulative = np.cumsum(explained)
 
-        # Etiqueta fija o nombre de archivo
-        if idx <= len(etiquetas_fijas):
-            label_var = etiquetas_fijas[idx-1]
+        # Fixed label or filename
+        if idx <= len(fixed_labels):
+            label_var = fixed_labels[idx-1]
         else:
             label_var = os.path.splitext(os.path.basename(f))[0]
 
-        # Barras de varianza explicada
+        # Explained variance bars
         plt.bar(components + 0.1*idx, explained*100, width=0.1,
-                label=f"{label_var} varianza")
+                label=f"{label_var} variance")
 
-        # Línea acumulada
+        # Cumulative line
         plt.plot(components, cumulative*100, marker="o",
                  color=cmap(idx-1), linestyle="--",
-                 label=f"{label_var} acumulada")
+                 label=f"{label_var} cumulative")
 
-    plt.xlabel("Componentes principales")
-    plt.ylabel("Porcentaje (%)")
-    plt.title("Varianza explicada y acumulada por componente")
+    plt.xlabel("Principal components")
+    plt.ylabel("Percentage (%)")
+    plt.title("Explained and cumulative variance per component")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.show()

@@ -63,9 +63,12 @@ def main():
         plt.plot(components, eigenvalues, marker="o",
                  color=cmap(idx-1), label=label)
 
-    plt.xlabel("Principal components")
-    plt.ylabel("Eigenvalues")
-    plt.title("Comparison of Eigenvalues Principal Components")
+    plt.rcParams['font.family'] = 'serif'
+    plt.rcParams['font.size'] = 15
+    plt.tick_params(axis='both', which='major', labelsize=20)
+    plt.xlabel("Eigenvectors", fontsize=25, labelpad=10)
+    plt.ylabel("Eigenvalues", fontsize=25, labelpad=10)
+    #plt.title("Eigenvalues comparison")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.show()
